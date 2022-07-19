@@ -1,5 +1,5 @@
-import sys
 # import libraries
+import sys
 import pandas as pd
 import numpy as np
 import sqlalchemy
@@ -32,20 +32,20 @@ import pickle
 
 def load_data(database_filepath):
     # load data from database
-    engine = sqlalchemy.create_engine('sqlite:///InsertDatabaseName.db')
-    df = pd.read_sql_table('InsertTableName', engine)
+    engine = sqlalchemy.create_engine('sqlite:///{}'.format(database_filepath))
+    df = pd.read_sql_table('Recovery_table', engine)
 
     X = df['message']
     y = df.drop(['id','message','original','genre'], axis=1)
     category_names = y.columns.tolist()
-    
+
     return X, y, category_names
 
 
-def tokenize(text):  
+def tokenize(text):
     # init Lemmatizer and Tokenizer for acceptable NLP words (no punctuation)
     wnl = WordNetLemmatizer()
-    tokenizer = nltk.RegexpTokenizer(r"\w+")   
+    tokenizer = nltk.RegexpTokenizer(r"\w+")
 
     text = tokenizer.tokenize(text.lower())
     text = [wnl.lemmatize(word) for word in text if word not in stopwords.words('english')]
@@ -54,11 +54,19 @@ def tokenize(text):
 
 
 def build_model():
+
+    '''
+    Creates ML pipeline:
+    1. tokenize the data
+    2. transirm it to Tdf form
+    3. creates the ML meodel instance - random forest
+    '''
+
     pipeline = Pipeline([('vect', CountVectorizer(tokenizer=tokenize)),
                      ('tfidf', TfidfTransformer()),
                      ('rf', MultiOutputClassifier(rf()))
                     ])
-    
+
     return pipeline
 
 
@@ -84,7 +92,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 def save_model(model, model_filepath):
     # create an iterator object with write permission - model.pkl
-    with open('model_pkl', 'wb') as files:
+    with open(model_filepath, 'wb') as files:
         pickle.dump(model, files)
 
 
@@ -94,13 +102,13 @@ def main():
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
         X, Y, category_names = load_data(database_filepath)
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
-        
+
         print('Building model...')
         model = build_model()
-        
+
         print('Training model...')
         model.fit(X_train, Y_train)
-        
+
         print('Evaluating model...')
         evaluate_model(model, X_test, Y_test, category_names)
 

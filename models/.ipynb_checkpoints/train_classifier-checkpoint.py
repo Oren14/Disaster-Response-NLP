@@ -129,13 +129,8 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 
-
-
 def save_model(model, model_filepath):
-    # create an iterator object with write permission - model.pkl
-    with open(model_filepath, 'wb') as files:
-        pickle.dump(model, files)
-
+    
     '''
     Takes a trained model and saved it
 
@@ -146,6 +141,12 @@ def save_model(model, model_filepath):
             Returns:
                     None
     '''
+    
+    # create an iterator object with write permission - model.pkl
+    with open(model_filepath, 'wb') as files:
+        pickle.dump(model, files)
+
+
         
 
 def main():

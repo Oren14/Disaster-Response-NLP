@@ -3,9 +3,9 @@ import sys
 import pandas as pd
 import sqlalchemy
 
+
 def load_data(messages_filepath, categories_filepath):
-    
-   '''
+    '''
     Returns merged df of two data sources.
 
             Parameters:
@@ -15,8 +15,8 @@ def load_data(messages_filepath, categories_filepath):
             Returns:
                     df (df): merged dataframe of the two files
     '''
-    
     # load messages dataset
+
     messages = pd.read_csv(messages_filepath)
 
     # load categories dataset
@@ -30,7 +30,7 @@ def load_data(messages_filepath, categories_filepath):
 
 def clean_data(df):
     
-   '''
+    '''
     Taking raw data dataframe, cleans it and splits into new column.
 
             Parameters:
@@ -86,7 +86,7 @@ def save_data(df, database_filename):
     '''
     
     engine = sqlalchemy.create_engine('sqlite:///data/DisasterResponse.db')
-    df.to_sql('Recovery_table', engine, index=False)
+    df.to_sql('Recovery_table', engine, index=False, if_exists='replace')
     
 
 

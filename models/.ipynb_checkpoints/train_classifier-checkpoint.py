@@ -86,7 +86,7 @@ def build_model():
 
 
             Returns:
-                    pipeline (pipeline): a pipeline for NLP
+                    pipeline (pipeline): a fited pipeline for NLP
     '''
     
 
@@ -95,8 +95,12 @@ def build_model():
                      ('tfidf', TfidfTransformer()),
                      ('rf', MultiOutputClassifier(rf()))
                     ])
+    
+    parameters = {'rf__estimator__n_estimators': [50,100,120]}
+    
+    cv = GridSearchCV(pipeline, param_grid=parameters, cv=2)
 
-    return pipeline
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):

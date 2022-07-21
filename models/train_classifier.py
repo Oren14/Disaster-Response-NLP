@@ -31,6 +31,19 @@ import pickle
 
 
 def load_data(database_filepath):
+    
+    '''
+    Takes data from a database and loads it to a pandas series.
+
+            Parameters:
+                    database_filepath (string): database file path.
+            Returns:
+                    X (pandas.Series) : masseges from database
+                    y (pandas.Series) : masseges classification
+                    category_names (List) : the massgess categories
+    '''
+    
+    
     # load data from database
     engine = sqlalchemy.create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql_table('Recovery_table', engine)
@@ -43,6 +56,16 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    
+    '''
+    Takes text and tokenize/lemmatize/commen case it.
+
+            Parameters:
+                    text (string): raw text
+            Returns:
+                    text (list): toknized words
+    '''
+    
     # init Lemmatizer and Tokenizer for acceptable NLP words (no punctuation)
     wnl = WordNetLemmatizer()
     tokenizer = nltk.RegexpTokenizer(r"\w+")
@@ -60,7 +83,13 @@ def build_model():
     1. tokenize the data
     2. transirm it to Tdf form
     3. creates the ML meodel instance - random forest
+
+
+            Returns:
+                    pipeline (pipeline): a pipeline for NLP
     '''
+    
+
 
     pipeline = Pipeline([('vect', CountVectorizer(tokenizer=tokenize)),
                      ('tfidf', TfidfTransformer()),
@@ -73,9 +102,21 @@ def build_model():
 def evaluate_model(model, X_test, Y_test, category_names):
     y_pred = model.predict(X_test)
 
+    
     '''
     Iterate through the classes and compute f1, precision and accuracy
+
+            Parameters:
+                    model (sklearn.ensemble.model):  model for NLP
+                    X_test (pandas.Series): massges data
+                    Y_test (pandas.Series): massges lables
+                    category_names (list): category names of lables
+                    
+            Returns:
+                    None
     '''
+    
+
 
     for i,cat in enumerate(category_names):
         print('For category "{}" this is the results:'.format(cat))
@@ -95,6 +136,17 @@ def save_model(model, model_filepath):
     with open(model_filepath, 'wb') as files:
         pickle.dump(model, files)
 
+    '''
+    Takes a trained model and saved it
+
+            Parameters:
+                    model (sklearn.ensemble.model): model for NLP
+                    model_filepath (string): path to save the model
+                    
+            Returns:
+                    None
+    '''
+        
 
 def main():
     if len(sys.argv) == 3:

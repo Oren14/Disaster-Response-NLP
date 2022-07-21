@@ -4,6 +4,18 @@ import pandas as pd
 import sqlalchemy
 
 def load_data(messages_filepath, categories_filepath):
+    
+   '''
+    Returns merged df of two data sources.
+
+            Parameters:
+                    messages_filepath (str): messages filepath
+                    categories_filepath (str): categories filepath
+
+            Returns:
+                    df (df): merged dataframe of the two files
+    '''
+    
     # load messages dataset
     messages = pd.read_csv(messages_filepath)
 
@@ -17,6 +29,16 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    
+   '''
+    Taking raw data dataframe, cleans it and splits into new column.
+
+            Parameters:
+                    df (DataFrame): dataframe before cleaning
+            Returns:
+                    df (DataFrame: dataframe after cleaning
+    '''
+
     # create a dataframe of the 36 individual category columns
     categories = df['categories'].str.split(';', expand=True)
     categories.head()
@@ -52,10 +74,23 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    
+    '''
+    Taking dataframe and saves it to database.
+
+            Parameters:
+                    df (DataFrame): data frame we want to save
+                    database_filename (str): database filename
+            Returns:
+                    df (DataFrame): dataframe after cleaning
+    '''
+    
     engine = sqlalchemy.create_engine('sqlite:///data/DisasterResponse.db')
     df.to_sql('Recovery_table', engine, index=False)
+    
 
 
+    
 
 def main():
     if len(sys.argv) == 4:
